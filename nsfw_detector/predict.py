@@ -7,6 +7,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 import tensorflow_hub as hub
+import tf_keras
 
 
 IMAGE_DIM = 224   # required/default image dimensionality
@@ -56,7 +57,7 @@ def load_model(model_path):
         raise ValueError(
             "saved_model_path must be the valid directory of a saved model to load.")
 
-    model = tf.keras.models.load_model(model_path, custom_objects={
+    model = tf_keras.models.load_model(model_path, custom_objects={
                                        'KerasLayer': hub.KerasLayer})
     return model
 

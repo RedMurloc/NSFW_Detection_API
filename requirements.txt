@@ -2,6 +2,7 @@ fastapi
 uvicorn
 aiohttp
 aiofiles
+tf_keras
 tensorflow
 tensorflow-hub
 pillow

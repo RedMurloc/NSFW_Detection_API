@@ -1,6 +1,8 @@
 from api import predict, app
 from api.functions import download_image
 from config import PORT
+from fastapi import Body
+import base64
 import os
 import uvicorn
 
@@ -26,6 +28,34 @@ async def detect_nsfw(url: str):
         return results
     elif (sexy + porn + hentai) >= 70:
         results['data']['is_nsfw'] = True
+        return results
+    elif drawings >= 40:
+        results['data']['is_nsfw'] = False
+        return results
+    else:
+        results['data']['is_nsfw'] = False
+        return results
+
+@app.post("/")
+async def detect_nsfw(data = Body()):
+    imgdata = base64.b64decode(data["base64Image"])
+    filename = 'image.jpg'
+    with open(filename, 'wb') as f:
+        f.write(imgdata)
+
+    results = predict.classify(model, filename)
+    os.remove(filename)
+
+    hentai = results['data']['hentai']
+    sexy = results['data']['sexy']
+    porn = results['data']['porn']
+    drawings = results['data']['drawings']
+    neutral = results['data']['neutral']
+    if (sexy + porn + hentai) >= 30:
+        results['data']['is_nsfw'] = True
+        return results 
+    elif neutral >= 25:
+        results['data']['is_nsfw'] = False
         return results
     elif drawings >= 40:
         results['data']['is_nsfw'] = False
